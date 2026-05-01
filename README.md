@@ -24,13 +24,15 @@ All metrics flow through **Grafana Alloy** to **Grafana Cloud** (Prometheus for 
 
 ## Architecture
 
-```
-┌─────────────────────┐        ┌──────────────┐        ┌──────────────────┐
-│  network-generator  │◄──scrape──│    Alloy    │──push──►│  Grafana Cloud   │
-│  (Prometheus metrics)│        │  (collector)  │        │  Metrics (Mimir)  │
-│  :9090/metrics      │        │              │        │  Logs (Loki)      │
-└─────────────────────┘        │  Docker logs ─┘        └──────────────────┘
-                               └──────────────┘
+```mermaid
+flowchart LR
+    gen["network-generator\n:9090/metrics"]
+    alloy["Alloy\n(collector)"]
+    cloud["Grafana Cloud\nMetrics (Mimir)\nLogs (Loki)"]
+
+    alloy -- "scrape /metrics" --> gen
+    alloy -- "remote_write" --> cloud
+    gen -. "Docker logs" .-> alloy
 ```
 
 ## Prerequisites
@@ -179,27 +181,33 @@ make stop
 
 ## Simulated Network Topology
 
-```
-            ┌─────────────────────┐
-            │   ISP Upstream 1    │
-            │   AS65100           │
-            └────┬───────────┬────┘
-                 │           │
-    ┌────────────▼──┐   ┌───▼────────────┐
-    │  core-rtr-01  │◄─►│  core-rtr-02   │    ISP Upstream 2 (AS65200)
-    │  dc-east      │   │  dc-west       │◄── CDN Peer (AS65300)
-    └──┬─────────┬──┘   └──┬──────────┬──┘
-       │         │          │          │
-  ┌────▼───┐ ┌──▼────┐ ┌───▼───┐ ┌───▼────┐
-  │dist-sw │ │  lb-01 │ │ lb-02 │ │        │
-  │  -01   │ │dc-east │ │dc-west│ │        │
-  └───┬────┘ └───┬────┘ └───┬───┘ │        │
-      │          │           │     │        │
-  ┌───▼────┐  ┌──▼─────────▼──┐  ┌▼───────┐
-  │access  │  │  Web / API /   │  │access  │
-  │ sw-01  │  │  App Servers   │  │ sw-02  │
-  │dc-east │  │  (pool members)│  │dc-west │
-  └────────┘  └────────────────┘  └────────┘
+```mermaid
+flowchart TD
+    isp1["ISP Upstream 1\nAS65100"]
+    isp2["ISP Upstream 2\nAS65200"]
+    cdn["CDN Peer\nAS65300"]
+
+    rtr1["core-rtr-01\ndc-east"]
+    rtr2["core-rtr-02\ndc-west"]
+
+    dsw1["dist-sw-01\ndc-east"]
+    lb1["lb-01\ndc-east"]
+    lb2["lb-02\ndc-west"]
+    asw2["access-sw-02\ndc-west"]
+
+    asw1["access-sw-01\ndc-east"]
+    pools["Web / API / App\nPool Members"]
+
+    isp1 --- rtr1 & rtr2
+    isp2 --- rtr2
+    cdn --- rtr2
+    rtr1 <-- "iBGP" --> rtr2
+
+    rtr1 --- dsw1 & lb1
+    rtr2 --- lb2 & asw2
+
+    dsw1 --- asw1
+    lb1 & lb2 --- pools
 ```
 
 ## Available Make Targets
