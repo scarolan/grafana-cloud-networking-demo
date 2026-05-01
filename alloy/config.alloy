@@ -32,41 +32,56 @@ prometheus.scrape "alloy_self" {
   metrics_path    = "/metrics"
 }
 
-// -----------------------------------------------------------------------------
-// Add Prometheus scrape targets for your application services:
-// -----------------------------------------------------------------------------
-// prometheus.scrape "my_service" {
-//   targets    = [{"__address__" = "my-service:8080"}]
-//   forward_to = [prometheus.remote_write.grafana_cloud.receiver]
-//
-//   scrape_interval = "15s"
-//   metrics_path    = "/metrics"
-// }
+// Scrape simulated network device metrics from the generator
+prometheus.scrape "network_devices" {
+  targets    = [{"__address__" = "network-generator:9090"}]
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+
+  scrape_interval = "15s"
+  metrics_path    = "/metrics"
+}
 
 // =============================================================================
-// Logs — Loki (uncomment when your demo needs log collection)
+// Logs — Loki (collects Docker container logs including BGP/pool member events)
 // =============================================================================
-// loki.write "grafana_cloud" {
-//   endpoint {
-//     url = env("GRAFANA_LOGS_URL")
-//
-//     basic_auth {
-//       username = env("GRAFANA_LOGS_USERNAME")
-//       password = env("GRAFANA_CLOUD_TOKEN")
-//     }
-//   }
-// }
+loki.write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_LOGS_URL")
 
-// Collect logs from Docker containers:
-// discovery.docker "containers" {
-//   host = "unix:///var/run/docker.sock"
-// }
-//
-// loki.source.docker "containers" {
-//   host    = "unix:///var/run/docker.sock"
-//   targets = discovery.docker.containers.targets
-//   forward_to = [loki.write.grafana_cloud.receiver]
-// }
+    basic_auth {
+      username = env("GRAFANA_LOGS_USERNAME")
+      password = env("GRAFANA_CLOUD_TOKEN")
+    }
+  }
+}
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_compose" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "compose_service"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    target_label  = "compose_project"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_compose.output
+  forward_to = [loki.write.grafana_cloud.receiver]
+}
 
 // =============================================================================
 // Traces — OTLP to Grafana Cloud Tempo (uncomment when your demo needs traces)

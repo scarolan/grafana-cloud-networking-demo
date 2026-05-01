@@ -53,16 +53,39 @@ alloy_metrics() {
 }
 
 # =============================================================================
-# Add demo-specific telemetry checks below:
+# Network device telemetry checks
 # =============================================================================
-# @test "my-app metrics are being scraped" {
-#   run alloy_metrics
-#   [ "$status" -eq 0 ]
-#   echo "$output" | grep -q 'scrape_samples_scraped{job="my_service"}'
-# }
-#
-# @test "my-app request metrics are present" {
-#   run curl -sf http://localhost:8080/metrics
-#   [ "$status" -eq 0 ]
-#   echo "$output" | grep -q 'http_requests_total'
-# }
+
+@test "network device metrics are being scraped by alloy" {
+  run alloy_metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'scrape_samples_scraped.*job="network_devices"'
+}
+
+@test "network device scrape is successful" {
+  run alloy_metrics
+  [ "$status" -eq 0 ]
+  # up == 1 means scrape target is reachable
+  echo "$output" | grep 'up{' | grep 'network_devices' | grep -q ' 1'
+}
+
+@test "interface metrics are present in generator" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_interface_received_bytes_total'
+  echo "$output" | grep -q 'network_interface_transmitted_bytes_total'
+}
+
+@test "bgp metrics are present in generator" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_bgp_session_state.*hostname="core-rtr-01"'
+  echo "$output" | grep -q 'network_bgp_prefixes_received'
+}
+
+@test "load balancer metrics are present in generator" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_lb_http_requests_total'
+  echo "$output" | grep -q 'network_lb_request_duration_seconds'
+}

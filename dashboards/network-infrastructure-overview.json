@@ -1,0 +1,3844 @@
+{
+  "dashboard": {
+    "uid": "network-infra-overview",
+    "title": "Network Infrastructure Overview",
+    "tags": [
+      "network",
+      "demo",
+      "infrastructure"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 42,
+    "refresh": "15s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "editable": true,
+    "templating": {
+      "list": [
+        {
+          "name": "site",
+          "type": "custom",
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "options": [
+            {
+              "text": "All",
+              "value": "$__all",
+              "selected": true
+            },
+            {
+              "text": "dc-east",
+              "value": "dc-east",
+              "selected": false
+            },
+            {
+              "text": "dc-west",
+              "value": "dc-west",
+              "selected": false
+            }
+          ],
+          "query": "dc-east,dc-west",
+          "includeAll": true,
+          "multi": true
+        }
+      ]
+    },
+    "panels": [
+      {
+        "type": "text",
+        "title": "",
+        "gridPos": {
+          "h": 3,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 100,
+        "transparent": true,
+        "options": {
+          "mode": "html",
+          "content": "<div style=\"display:flex; align-items:center; gap:16px; padding:4px 0;\">\n  <div style=\"font-size:36px;\">\ud83c\udf10</div>\n  <div>\n    <div style=\"font-size:24px; font-weight:700; color:#fff; letter-spacing:-0.5px;\">Network Infrastructure Overview</div>\n    <div style=\"font-size:13px; color:rgba(204,204,220,0.65); margin-top:2px;\">Enterprise network monitoring &bull; 2 Routers &bull; 3 Switches &bull; 2 Load Balancers &bull; Dual-site (dc-east / dc-west)</div>\n  </div>\n</div>"
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83d\udcca Key Performance Indicators",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 3
+        },
+        "id": 200,
+        "collapsed": false
+      },
+      {
+        "type": "stat",
+        "title": "Devices Online",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 0,
+          "y": 4
+        },
+        "id": 201,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "count(network_device_uptime_seconds > 0)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#73BF69"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "BGP Sessions Up",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 4,
+          "y": 4
+        },
+        "id": 202,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "count(network_bgp_session_state == 1)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#F2495C",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 4
+                },
+                {
+                  "color": "#73BF69",
+                  "value": 6
+                }
+              ]
+            },
+            "max": 6,
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Avg CPU Utilization",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 8,
+          "y": 4
+        },
+        "id": 203,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "avg(network_device_cpu_usage_percent)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 60
+                },
+                {
+                  "color": "#F2495C",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percent",
+            "decimals": 1,
+            "max": 100
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Active LB Connections",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 12,
+          "y": 4
+        },
+        "id": 204,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum(network_lb_active_connections)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlPu"
+            },
+            "unit": "short",
+            "decimals": 0
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Pool Members Healthy",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 16,
+          "y": 4
+        },
+        "id": 205,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "count(network_lb_pool_member_status == 1)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#F2495C",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 14
+                },
+                {
+                  "color": "#73BF69",
+                  "value": 16
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "LB Request Rate",
+        "gridPos": {
+          "h": 4,
+          "w": 4,
+          "x": 20,
+          "y": 4
+        },
+        "id": 206,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum(rate(network_lb_http_requests_total[5m]))"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlPu"
+            },
+            "unit": "reqps",
+            "decimals": 0
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "textMode": "value",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "wideLayout": true
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83c\udf10 Network Topology",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 8
+        },
+        "id": 300,
+        "collapsed": false
+      },
+      {
+        "type": "canvas",
+        "title": "",
+        "gridPos": {
+          "h": 14,
+          "w": 14,
+          "x": 0,
+          "y": 9
+        },
+        "id": 301,
+        "transparent": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "rtr1_bgp",
+            "expr": "min(network_bgp_session_state{hostname=\"core-rtr-01\"})",
+            "legendFormat": "core-rtr-01-bgp"
+          },
+          {
+            "refId": "rtr2_bgp",
+            "expr": "min(network_bgp_session_state{hostname=\"core-rtr-02\"})",
+            "legendFormat": "core-rtr-02-bgp"
+          },
+          {
+            "refId": "lb1_pool",
+            "expr": "min(network_lb_pool_member_status{hostname=\"lb-01\"})",
+            "legendFormat": "lb-01-pool"
+          },
+          {
+            "refId": "lb2_pool",
+            "expr": "min(network_lb_pool_member_status{hostname=\"lb-02\"})",
+            "legendFormat": "lb-02-pool"
+          },
+          {
+            "refId": "rtr1_cpu",
+            "expr": "network_device_cpu_usage_percent{hostname=\"core-rtr-01\"}",
+            "legendFormat": "core-rtr-01-cpu"
+          },
+          {
+            "refId": "rtr2_cpu",
+            "expr": "network_device_cpu_usage_percent{hostname=\"core-rtr-02\"}",
+            "legendFormat": "core-rtr-02-cpu"
+          },
+          {
+            "refId": "lb1_cpu",
+            "expr": "network_device_cpu_usage_percent{hostname=\"lb-01\"}",
+            "legendFormat": "lb-01-cpu"
+          },
+          {
+            "refId": "lb2_cpu",
+            "expr": "network_device_cpu_usage_percent{hostname=\"lb-02\"}",
+            "legendFormat": "lb-02-cpu"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#F2495C",
+                  "value": 0
+                },
+                {
+                  "color": "#73BF69",
+                  "value": 0.5
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": false,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "#111217"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "transparent"
+              },
+              "width": 0
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "name": "title",
+                "placement": {
+                  "left": 10,
+                  "top": 6,
+                  "width": 400,
+                  "height": 26
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "left",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 18,
+                  "text": {
+                    "fixed": "Network Topology",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "legend-green",
+                "placement": {
+                  "left": 10,
+                  "top": 30,
+                  "width": 80,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "left",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#73BF69"
+                  },
+                  "size": 11,
+                  "text": {
+                    "fixed": "\u25cf healthy",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "legend-red",
+                "placement": {
+                  "left": 90,
+                  "top": 30,
+                  "width": 90,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "left",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#F2495C"
+                  },
+                  "size": 11,
+                  "text": {
+                    "fixed": "\u25cf degraded",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "site-east-label",
+                "placement": {
+                  "left": 60,
+                  "top": 48,
+                  "width": 310,
+                  "height": 18
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.4)"
+                  },
+                  "size": 11,
+                  "text": {
+                    "fixed": "\u2500\u2500\u2500\u2500 dc-east \u2500\u2500\u2500\u2500",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "site-west-label",
+                "placement": {
+                  "left": 500,
+                  "top": 48,
+                  "width": 310,
+                  "height": 18
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.4)"
+                  },
+                  "size": 11,
+                  "text": {
+                    "fixed": "\u2500\u2500\u2500\u2500 dc-west \u2500\u2500\u2500\u2500",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "internet",
+                "placement": {
+                  "left": 395,
+                  "top": 58,
+                  "width": 75,
+                  "height": 75
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/cloud.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#6E56CF",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "core-rtr-01",
+                    "color": {
+                      "fixed": "rgba(110,86,207,0.45)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": -0.5,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.3,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "core-rtr-02",
+                    "color": {
+                      "fixed": "rgba(110,86,207,0.45)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.5,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": -0.3,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "internet-label",
+                "placement": {
+                  "left": 385,
+                  "top": 133,
+                  "width": 95,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 10,
+                  "text": {
+                    "fixed": "Internet / ISP",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "core-rtr-01",
+                "placement": {
+                  "left": 185,
+                  "top": 170,
+                  "width": 45,
+                  "height": 45
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/generic-router-square-colour.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "core-rtr-02",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.4)"
+                    },
+                    "size": {
+                      "fixed": 2,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dashed"
+                    },
+                    "direction": {
+                      "fixed": "none",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 1.0,
+                      "y": 0.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": -1.0,
+                      "y": 0.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "dist-sw-01",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": -0.6,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.3,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "lb-01",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.3,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": -0.2,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "rtr1-label",
+                "placement": {
+                  "left": 143,
+                  "top": 230,
+                  "width": 130,
+                  "height": 26
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 10,
+                  "text": {
+                    "fixed": "core-rtr-01\nCisco ISR-4451",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "core-rtr-02",
+                "placement": {
+                  "left": 635,
+                  "top": 170,
+                  "width": 45,
+                  "height": 45
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/generic-router-square-colour.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "lb-02",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": -0.3,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "access-sw-02",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.6,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "rtr2-label",
+                "placement": {
+                  "left": 593,
+                  "top": 230,
+                  "width": 130,
+                  "height": 26
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 10,
+                  "text": {
+                    "fixed": "core-rtr-02\nCisco ISR-4451",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "dist-sw-01",
+                "placement": {
+                  "left": 36,
+                  "top": 281,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/cisco-switch-l3.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "access-sw-01",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.0,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "dsw1-label",
+                "placement": {
+                  "left": 8,
+                  "top": 335,
+                  "width": 105,
+                  "height": 24
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "dist-sw-01\nC9500-24Y4C",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "lb-01",
+                "placement": {
+                  "left": 246,
+                  "top": 281,
+                  "width": 50,
+                  "height": 50
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/f5-ltm.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "pool-web-east",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": -0.4,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "pool-api-east",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.0,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "pool-app-east",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.4,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "lb1-label",
+                "placement": {
+                  "left": 218,
+                  "top": 337,
+                  "width": 105,
+                  "height": 24
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "lb-01\nF5 BIG-IP",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "lb-02",
+                "placement": {
+                  "left": 576,
+                  "top": 281,
+                  "width": 50,
+                  "height": 50
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/f5-ltm.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": [
+                  {
+                    "targetName": "pool-web-west",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": -0.4,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "pool-api-west",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.0,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  },
+                  {
+                    "targetName": "pool-app-west",
+                    "color": {
+                      "fixed": "rgba(204,204,220,0.35)"
+                    },
+                    "size": {
+                      "fixed": 1.5,
+                      "min": 1,
+                      "max": 10
+                    },
+                    "path": "straight",
+                    "lineStyle": {
+                      "animate": true,
+                      "style": "dotted"
+                    },
+                    "direction": {
+                      "fixed": "forward",
+                      "mode": "fixed"
+                    },
+                    "source": {
+                      "x": 0.4,
+                      "y": -1.0
+                    },
+                    "sourceOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "target": {
+                      "x": 0.0,
+                      "y": 1.0
+                    },
+                    "targetOriginal": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "vertices": []
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "name": "lb2-label",
+                "placement": {
+                  "left": 548,
+                  "top": 337,
+                  "width": 105,
+                  "height": 24
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "lb-02\nF5 BIG-IP",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "access-sw-02",
+                "placement": {
+                  "left": 796,
+                  "top": 281,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/cisco-switch-l2.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "asw2-label",
+                "placement": {
+                  "left": 768,
+                  "top": 335,
+                  "width": 105,
+                  "height": 24
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "access-sw-02\nC9300-48P",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "access-sw-01",
+                "placement": {
+                  "left": 38,
+                  "top": 396,
+                  "width": 44,
+                  "height": 44
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "https://storage.googleapis.com/network-icons-svg/cisco-switch-l2.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#73BF69",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "asw1-label",
+                "placement": {
+                  "left": 10,
+                  "top": 445,
+                  "width": 100,
+                  "height": 24
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "#FFFFFF"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "access-sw-01\nC9300-48P",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-web-east",
+                "placement": {
+                  "left": 180,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-web-east-label",
+                "placement": {
+                  "left": 178,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "Web",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-api-east",
+                "placement": {
+                  "left": 245,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-api-east-label",
+                "placement": {
+                  "left": 243,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "API",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-app-east",
+                "placement": {
+                  "left": 310,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-app-east-label",
+                "placement": {
+                  "left": 308,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "App",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-web-west",
+                "placement": {
+                  "left": 510,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-web-west-label",
+                "placement": {
+                  "left": 508,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "Web",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-api-west",
+                "placement": {
+                  "left": 575,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-api-west-label",
+                "placement": {
+                  "left": 573,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "API",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "icon",
+                "name": "pool-app-west",
+                "placement": {
+                  "left": 640,
+                  "top": 380,
+                  "width": 48,
+                  "height": 48
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "path": {
+                    "fixed": "img/icons/unicons/server.svg",
+                    "mode": "fixed"
+                  },
+                  "fill": {
+                    "fixed": "#FF9830",
+                    "field": ""
+                  }
+                },
+                "connections": []
+              },
+              {
+                "type": "text",
+                "name": "pool-app-west-label",
+                "placement": {
+                  "left": 638,
+                  "top": 428,
+                  "width": 52,
+                  "height": 16
+                },
+                "background": {
+                  "color": {
+                    "fixed": "transparent"
+                  }
+                },
+                "border": {
+                  "color": {
+                    "fixed": "transparent"
+                  },
+                  "width": 0
+                },
+                "constraint": {
+                  "horizontal": "left",
+                  "vertical": "top"
+                },
+                "config": {
+                  "align": "center",
+                  "valign": "middle",
+                  "color": {
+                    "fixed": "rgba(204,204,220,0.6)"
+                  },
+                  "size": 9,
+                  "text": {
+                    "fixed": "App",
+                    "mode": "fixed"
+                  }
+                },
+                "connections": []
+              }
+            ],
+            "name": "root",
+            "type": "frame"
+          }
+        }
+      },
+      {
+        "type": "table",
+        "title": "Device Health",
+        "gridPos": {
+          "h": 8,
+          "w": 10,
+          "x": 14,
+          "y": 9
+        },
+        "id": 310,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "cpu",
+            "expr": "network_device_cpu_usage_percent",
+            "instant": true,
+            "format": "table",
+            "legendFormat": ""
+          },
+          {
+            "refId": "mem",
+            "expr": "network_device_memory_usage_percent",
+            "instant": true,
+            "format": "table",
+            "legendFormat": ""
+          },
+          {
+            "refId": "temp",
+            "expr": "network_device_temperature_celsius{sensor=\"cpu\"}",
+            "instant": true,
+            "format": "table",
+            "legendFormat": ""
+          }
+        ],
+        "transformations": [
+          {
+            "id": "seriesToColumns",
+            "options": {
+              "byField": "hostname"
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time 1": true,
+                "Time 2": true,
+                "Time 3": true,
+                "__name__ 1": true,
+                "__name__ 2": true,
+                "__name__ 3": true,
+                "role 2": true,
+                "role 3": true,
+                "site 2": true,
+                "site 3": true,
+                "sensor": true,
+                "job 1": true,
+                "job 2": true,
+                "job 3": true,
+                "instance 1": true,
+                "instance 2": true,
+                "instance 3": true
+              },
+              "indexByName": {
+                "hostname": 0,
+                "site 1": 1,
+                "role 1": 2,
+                "Value #cpu": 3,
+                "Value #mem": 4,
+                "Value #temp": 5
+              },
+              "renameByName": {
+                "hostname": "Host",
+                "site 1": "Site",
+                "role 1": "Role",
+                "Value #cpu": "CPU %",
+                "Value #mem": "Mem %",
+                "Value #temp": "Temp \u00b0C"
+              }
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "filterable": false,
+              "minWidth": 50
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "CPU %"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "gauge",
+                    "mode": "gradient",
+                    "valueDisplayMode": "text"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#73BF69",
+                        "value": null
+                      },
+                      {
+                        "color": "#FF9830",
+                        "value": 60
+                      },
+                      {
+                        "color": "#F2495C",
+                        "value": 85
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Mem %"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "gauge",
+                    "mode": "gradient",
+                    "valueDisplayMode": "text"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#73BF69",
+                        "value": null
+                      },
+                      {
+                        "color": "#FF9830",
+                        "value": 70
+                      },
+                      {
+                        "color": "#F2495C",
+                        "value": 90
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Temp \u00b0C"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "celsius"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#73BF69",
+                        "value": null
+                      },
+                      {
+                        "color": "#FF9830",
+                        "value": 55
+                      },
+                      {
+                        "color": "#F2495C",
+                        "value": 65
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "footer": {
+            "show": false
+          },
+          "frameIndex": 0
+        }
+      },
+      {
+        "type": "table",
+        "title": "Pool Member Health",
+        "gridPos": {
+          "h": 8,
+          "w": 10,
+          "x": 14,
+          "y": 17
+        },
+        "id": 311,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_lb_pool_member_status",
+            "instant": true,
+            "format": "table",
+            "legendFormat": ""
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "__name__": true,
+                "job": true,
+                "instance": true
+              },
+              "indexByName": {
+                "hostname": 0,
+                "site": 1,
+                "pool": 2,
+                "member": 3,
+                "Value": 4
+              },
+              "renameByName": {
+                "hostname": "LB",
+                "site": "Site",
+                "pool": "Pool",
+                "member": "Member",
+                "Value": "Status"
+              }
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "filterable": false,
+              "minWidth": 40
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Status"
+              },
+              "properties": [
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "text": "DOWN",
+                          "color": "#F2495C"
+                        },
+                        "1": {
+                          "text": "UP",
+                          "color": "#73BF69"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "footer": {
+            "show": false
+          },
+          "frameIndex": 0
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83d\udcbb Device Health",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 25
+        },
+        "id": 400,
+        "collapsed": false
+      },
+      {
+        "type": "timeseries",
+        "title": "CPU Utilization by Device",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 26
+        },
+        "id": 401,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_device_cpu_usage_percent{site=~\"$site\"}",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "percent",
+            "max": 100,
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "spanNulls": false,
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 60
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom",
+            "calcs": [
+              "mean",
+              "max"
+            ]
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "Memory Utilization by Device",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 26
+        },
+        "id": 402,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_device_memory_usage_percent{site=~\"$site\"}",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "percent",
+            "max": 100,
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "spanNulls": false,
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom",
+            "calcs": [
+              "mean",
+              "max"
+            ]
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "gauge",
+        "title": "Device Temperature (\u00b0C)",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 26
+        },
+        "id": 403,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_device_temperature_celsius{sensor=\"cpu\", site=~\"$site\"}",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "unit": "celsius",
+            "min": 15,
+            "max": 60,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 42
+                },
+                {
+                  "color": "#F2495C",
+                  "value": 52
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "orientation": "auto"
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83d\udd04 BGP & Routing",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 34
+        },
+        "id": 500,
+        "collapsed": false
+      },
+      {
+        "type": "table",
+        "title": "BGP Session Status",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 35
+        },
+        "id": 501,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "state",
+            "expr": "network_bgp_session_state",
+            "legendFormat": "",
+            "instant": true,
+            "format": "table"
+          },
+          {
+            "refId": "pfx",
+            "expr": "network_bgp_prefixes_received",
+            "legendFormat": "",
+            "instant": true,
+            "format": "table"
+          },
+          {
+            "refId": "up",
+            "expr": "network_bgp_session_uptime_seconds",
+            "legendFormat": "",
+            "instant": true,
+            "format": "table"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "seriesToColumns",
+            "options": {
+              "byField": "peer"
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time 1": true,
+                "Time 2": true,
+                "Time 3": true,
+                "__name__ 1": true,
+                "__name__ 2": true,
+                "__name__ 3": true,
+                "hostname 2": true,
+                "hostname 3": true,
+                "remote_asn 2": true,
+                "remote_asn 3": true,
+                "description 2": true,
+                "description 3": true,
+                "site 2": true,
+                "site 3": true,
+                "job 1": true,
+                "job 2": true,
+                "job 3": true,
+                "instance 1": true,
+                "instance 2": true,
+                "instance 3": true
+              },
+              "renameByName": {
+                "hostname 1": "Router",
+                "peer": "Peer IP",
+                "remote_asn 1": "Remote ASN",
+                "description 1": "Description",
+                "site 1": "Site",
+                "Value #state": "State",
+                "Value #pfx": "Prefixes",
+                "Value #up": "Uptime (s)"
+              }
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              }
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "State"
+              },
+              "properties": [
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "text": "DOWN",
+                          "color": "#F2495C"
+                        },
+                        "1": {
+                          "text": "UP",
+                          "color": "#73BF69"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Prefixes"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Uptime (s)"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "dtdurations"
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "footer": {
+            "show": false
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "BGP Prefixes Received",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 35
+        },
+        "id": 502,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_bgp_prefixes_received{site=~\"$site\"}",
+            "legendFormat": "{{hostname}} \u2192 {{description}} (AS{{remote_asn}})"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "spanNulls": false,
+              "axisSoftMin": 0
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom",
+            "calcs": [
+              "lastNotNull"
+            ]
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "row",
+        "title": "\u2696\ufe0f Load Balancers",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 43
+        },
+        "id": 600,
+        "collapsed": false
+      },
+      {
+        "type": "timeseries",
+        "title": "Active Connections by Virtual Server",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 44
+        },
+        "id": 601,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_lb_active_connections{site=~\"$site\"}",
+            "legendFormat": "{{hostname}} / {{virtual_server}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 20,
+              "gradientMode": "opacity",
+              "showPoints": "never",
+              "spanNulls": false,
+              "axisSoftMin": 0,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              }
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "HTTP Requests/sec by Status Code",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 44
+        },
+        "id": 602,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum by (status_code) (rate(network_lb_http_requests_total{site=~\"$site\"}[5m]))",
+            "legendFormat": "{{status_code}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "reqps",
+            "custom": {
+              "drawStyle": "bars",
+              "lineWidth": 0,
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "mode": "normal",
+                "group": "A"
+              },
+              "barAlignment": 0,
+              "barWidthFactor": 0.85
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "200"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#73BF69"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "301"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#3274D9"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "304"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#56A5EC"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "404"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#FF9830"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "500"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#F2495C"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "502"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#E02F44"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "503"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#C4162A"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "heatmap",
+        "title": "Request Latency Distribution",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 44
+        },
+        "id": 603,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum(increase(network_lb_request_duration_seconds_bucket{site=~\"$site\"}[5m])) by (le)",
+            "legendFormat": "{{le}}",
+            "format": "heatmap"
+          }
+        ],
+        "options": {
+          "calculate": false,
+          "cellGap": 1,
+          "color": {
+            "exponent": 0.5,
+            "fill": "#6E56CF",
+            "mode": "scheme",
+            "scheme": "Spectral",
+            "reverse": true,
+            "steps": 64
+          },
+          "yAxis": {
+            "unit": "s"
+          },
+          "tooltip": {
+            "show": true,
+            "yHistogram": false
+          },
+          "legend": {
+            "show": true
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83d\udd0c Switch & Interface Monitoring",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 52
+        },
+        "id": 700,
+        "collapsed": false
+      },
+      {
+        "type": "timeseries",
+        "title": "Top Interface Utilization (Routers)",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 53
+        },
+        "id": 701,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "topk(8, network_interface_utilization_percent{role=\"core\", direction=\"in\", site=~\"$site\"})",
+            "legendFormat": "{{hostname}}:{{interface}} (in)"
+          },
+          {
+            "refId": "B",
+            "expr": "topk(8, network_interface_utilization_percent{role=\"core\", direction=\"out\", site=~\"$site\"})",
+            "legendFormat": "{{hostname}}:{{interface}} (out)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "percent",
+            "max": 100,
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 1.5,
+              "fillOpacity": 8,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "spanNulls": false,
+              "thresholdsStyle": {
+                "mode": "dashed"
+              }
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "bargauge",
+        "title": "Switch MAC Table Utilization",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 53
+        },
+        "id": 702,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_switch_mac_table_entries{site=~\"$site\"} / network_switch_mac_table_capacity * 100",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 60
+                },
+                {
+                  "color": "#F2495C",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "showUnfilled": true,
+          "valueMode": "text"
+        }
+      },
+      {
+        "type": "bargauge",
+        "title": "PoE Power Utilization",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 53
+        },
+        "id": 703,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_switch_poe_power_watts{site=~\"$site\"} / network_switch_poe_budget_watts * 100",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 70
+                },
+                {
+                  "color": "#F2495C",
+                  "value": 90
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "showUnfilled": true,
+          "valueMode": "text"
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83d\udcc8 Traffic & Throughput",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 61
+        },
+        "id": 750,
+        "collapsed": false
+      },
+      {
+        "type": "timeseries",
+        "title": "Load Balancer Throughput",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 62
+        },
+        "id": 751,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum by (hostname, virtual_server) (rate(network_lb_received_bytes_total{site=~\"$site\"}[5m]) * 8)",
+            "legendFormat": "{{hostname}}/{{virtual_server}} (in)"
+          },
+          {
+            "refId": "B",
+            "expr": "sum by (hostname, virtual_server) (rate(network_lb_transmitted_bytes_total{site=~\"$site\"}[5m]) * 8)",
+            "legendFormat": "{{hostname}}/{{virtual_server}} (out)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "bps",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 1.5,
+              "fillOpacity": 12,
+              "gradientMode": "opacity",
+              "showPoints": "never",
+              "spanNulls": false,
+              "axisSoftMin": 0
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "SSL Handshakes by TLS Version",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 62
+        },
+        "id": 752,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum by (tls_version) (rate(network_lb_ssl_handshakes_total{site=~\"$site\"}[5m]))",
+            "legendFormat": "{{tls_version}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "ops",
+            "custom": {
+              "drawStyle": "bars",
+              "lineWidth": 0,
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "showPoints": "never",
+              "stacking": {
+                "mode": "normal",
+                "group": "A"
+              },
+              "barWidthFactor": 0.85
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "TLSv1.3"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#73BF69"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "TLSv1.2"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "#FF9830"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi"
+          }
+        }
+      },
+      {
+        "type": "gauge",
+        "title": "Connection Table Utilization",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 62
+        },
+        "id": 753,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "network_lb_connection_table_utilization_percent{site=~\"$site\"}",
+            "legendFormat": "{{hostname}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#73BF69",
+                  "value": null
+                },
+                {
+                  "color": "#FF9830",
+                  "value": 60
+                },
+                {
+                  "color": "#F2495C",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "orientation": "auto"
+        }
+      },
+      {
+        "type": "row",
+        "title": "\ud83e\udeb5 Network Event Logs",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 70
+        },
+        "id": 800,
+        "collapsed": false
+      },
+      {
+        "type": "logs",
+        "title": "Network Events (BGP Flaps, Pool Member Changes)",
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 71
+        },
+        "id": 801,
+        "datasource": {
+          "type": "loki",
+          "uid": "grafanacloud-logs"
+        },
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "{compose_service=\"network-generator\"} |~ \"BGP|Pool member|STP|Interface|OSPF|SSH login|Configuration changed|Fan speed|THERMAL|SSL handshake timeout|Connection table pressure|ACL hit.*deny\""
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": false,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "sortOrder": "Descending",
+          "dedupStrategy": "none"
+        }
+      }
+    ]
+  },
+  "overwrite": true
+}

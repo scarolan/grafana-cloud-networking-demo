@@ -33,22 +33,50 @@
 }
 
 # =============================================================================
-# Add demo-specific service checks below:
+# Network generator service checks
 # =============================================================================
-# @test "my-app container is running" {
-#   run docker compose ps --format json my-app
-#   [ "$status" -eq 0 ]
-#   echo "$output" | grep -q '"State":"running"'
-# }
-#
-# @test "my-app container is healthy" {
-#   container_id=$(docker compose ps -q my-app)
-#   run docker inspect --format='{{.State.Health.Status}}' "$container_id"
-#   [ "$status" -eq 0 ]
-#   [ "$output" = "healthy" ]
-# }
-#
-# @test "my-app is accessible on port 8080" {
-#   run curl -sf http://localhost:8080/health
-#   [ "$status" -eq 0 ]
-# }
+
+@test "network-generator container is running" {
+  run docker compose ps --format json network-generator
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q '"State":"running"'
+}
+
+@test "network-generator container is healthy" {
+  container_id=$(docker compose ps -q network-generator)
+  run docker inspect --format='{{.State.Health.Status}}' "$container_id"
+  [ "$status" -eq 0 ]
+  [ "$output" = "healthy" ]
+}
+
+@test "network-generator metrics endpoint is accessible" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+}
+
+@test "network-generator exposes device info metrics" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_device_info'
+}
+
+@test "network-generator exposes router metrics" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_bgp_session_state'
+  echo "$output" | grep -q 'network_routing_table_entries'
+}
+
+@test "network-generator exposes switch metrics" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_switch_mac_table_entries'
+  echo "$output" | grep -q 'network_switch_poe_power_watts'
+}
+
+@test "network-generator exposes load balancer metrics" {
+  run curl -sf http://localhost:9090/metrics
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q 'network_lb_active_connections'
+  echo "$output" | grep -q 'network_lb_pool_member_status'
+}

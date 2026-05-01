@@ -2,53 +2,38 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 // =============================================================================
-// k6 Load Test — Demo Builder Template
+// k6 Load Test — Network Monitoring Demo
 // =============================================================================
-// Edit this file to target your demo's endpoints and generate realistic traffic.
+// Hits the Prometheus metrics endpoint on the network generator to simulate
+// a monitoring system polling the exporter at scale.
 //
 // Run locally:   k6 run k6/load-test.js
-// Run in cloud:  K6_CLOUD_TOKEN=<token> k6 cloud k6/load-test.js
+// Run in Docker: docker compose --profile load-test run --rm k6 run /scripts/load-test.js
 // =============================================================================
 
 export const options = {
   stages: [
-    { duration: '30s', target: 10 },  // Ramp up to 10 virtual users
-    { duration: '1m', target: 10 },   // Hold steady at 10 VUs
-    { duration: '30s', target: 0 },   // Ramp down to 0
+    { duration: '30s', target: 5 },   // Ramp up — simulate multiple scrapers
+    { duration: '2m', target: 5 },    // Hold steady — sustained polling
+    { duration: '30s', target: 0 },   // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<500'],  // 95% of requests complete under 500ms
-    http_req_failed: ['rate<0.01'],    // Less than 1% failure rate
+    http_req_duration: ['p(95)<2000'],  // Metrics endpoint should respond under 2s
+    http_req_failed: ['rate<0.01'],
   },
 };
 
-// Base URL for your demo application
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
+const GENERATOR_URL = __ENV.GENERATOR_URL || 'http://network-generator:9090';
 
 export default function () {
-  // --- Replace with your demo's endpoints ---
-
-  // Example: Health check
-  const healthRes = http.get(`${BASE_URL}/health`);
-  check(healthRes, {
-    'health check returns 200': (r) => r.status === 200,
+  const metricsRes = http.get(`${GENERATOR_URL}/metrics`);
+  check(metricsRes, {
+    'metrics endpoint returns 200': (r) => r.status === 200,
+    'response contains device metrics': (r) => r.body.includes('network_device_cpu_usage_percent'),
+    'response contains interface metrics': (r) => r.body.includes('network_interface_received_bytes_total'),
+    'response contains bgp metrics': (r) => r.body.includes('network_bgp_session_state'),
+    'response contains lb metrics': (r) => r.body.includes('network_lb_active_connections'),
   });
 
-  // Example: API endpoint
-  // const apiRes = http.get(`${BASE_URL}/api/v1/data`);
-  // check(apiRes, {
-  //   'api returns 200': (r) => r.status === 200,
-  //   'api response has data': (r) => r.json().data !== undefined,
-  // });
-
-  // Example: POST request
-  // const payload = JSON.stringify({ key: 'value' });
-  // const params = { headers: { 'Content-Type': 'application/json' } };
-  // const postRes = http.post(`${BASE_URL}/api/v1/items`, payload, params);
-  // check(postRes, {
-  //   'create returns 201': (r) => r.status === 201,
-  // });
-
-  // Simulate user think time
-  sleep(1);
+  sleep(3);
 }
