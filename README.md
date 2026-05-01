@@ -26,13 +26,21 @@ All metrics flow through **Grafana Alloy** to **Grafana Cloud** (Prometheus for 
 
 ```mermaid
 flowchart LR
-    gen["network-generator\n:9090/metrics"]
-    alloy["Alloy\n(collector)"]
-    cloud["Grafana Cloud\nMetrics (Mimir)\nLogs (Loki)"]
+    gen["🖥️ network-generator\n:9090/metrics"]
+    alloy["⚙️ Alloy\ncollector"]
+    cloud["☁️ Grafana Cloud\nMetrics · Logs"]
 
-    alloy -- "scrape /metrics" --> gen
-    alloy -- "remote_write" --> cloud
+    alloy -- "scrape\n/metrics" --> gen
+    alloy -- "remote_write\n+ loki push" --> cloud
     gen -. "Docker logs" .-> alloy
+
+    classDef app fill:#E0830F,stroke:#FF9830,color:#fff
+    classDef collector fill:#2A7AB5,stroke:#3D96D4,color:#fff
+    classDef cloud fill:#6E56CF,stroke:#8B7BD4,color:#fff
+
+    class gen app
+    class alloy collector
+    class cloud cloud
 ```
 
 ## Prerequisites
@@ -183,31 +191,50 @@ make stop
 
 ```mermaid
 flowchart TD
-    isp1["ISP Upstream 1\nAS65100"]
-    isp2["ISP Upstream 2\nAS65200"]
-    cdn["CDN Peer\nAS65300"]
+    subgraph internet["☁️ Internet"]
+        isp1(["ISP Upstream 1\nAS65100"])
+        isp2(["ISP Upstream 2\nAS65200"])
+        cdn(["CDN Peer\nAS65300"])
+    end
 
-    rtr1["core-rtr-01\ndc-east"]
-    rtr2["core-rtr-02\ndc-west"]
+    subgraph east["dc-east"]
+        rtr1["core-rtr-01\nCisco ISR-4451"]
+        dsw1["dist-sw-01\nC9500-24Y4C"]
+        lb1["lb-01 ⚠️\nF5 BIG-IP"]
+        asw1["access-sw-01\nC9300-48P"]
+        ep["Web / API / App\nEast Pools"]
+    end
 
-    dsw1["dist-sw-01\ndc-east"]
-    lb1["lb-01\ndc-east"]
-    lb2["lb-02\ndc-west"]
-    asw2["access-sw-02\ndc-west"]
-
-    asw1["access-sw-01\ndc-east"]
-    pools["Web / API / App\nPool Members"]
+    subgraph west["dc-west"]
+        rtr2["core-rtr-02\nCisco ISR-4451"]
+        lb2["lb-02\nF5 BIG-IP"]
+        asw2["access-sw-02\nC9300-48P"]
+        wp["Web / API / App\nWest Pools"]
+    end
 
     isp1 --- rtr1 & rtr2
     isp2 --- rtr2
     cdn --- rtr2
-    rtr1 <-- "iBGP" --> rtr2
-
+    rtr1 <-. "iBGP" .-> rtr2
     rtr1 --- dsw1 & lb1
     rtr2 --- lb2 & asw2
-
     dsw1 --- asw1
-    lb1 & lb2 --- pools
+    lb1 --- ep
+    lb2 --- wp
+
+    classDef isp fill:#6E56CF,stroke:#8B7BD4,color:#fff
+    classDef router fill:#104ead,stroke:#3274D9,color:#fff
+    classDef switch fill:#2A7AB5,stroke:#3D96D4,color:#fff
+    classDef lb fill:#37872D,stroke:#56A64B,color:#fff
+    classDef lbwarn fill:#CC3C20,stroke:#F2495C,color:#fff
+    classDef pool fill:#E0830F,stroke:#FF9830,color:#fff
+
+    class isp1,isp2,cdn isp
+    class rtr1,rtr2 router
+    class dsw1,asw1,asw2 switch
+    class lb2 lb
+    class lb1 lbwarn
+    class ep,wp pool
 ```
 
 ## Available Make Targets
