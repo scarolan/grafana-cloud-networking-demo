@@ -2,6 +2,8 @@
 
 Demonstrates Grafana Cloud's capabilities for monitoring enterprise network infrastructure — routers, switches, and load balancers — using simulated SNMP-style Prometheus metrics.
 
+![Network Infrastructure Overview Dashboard](dashboards/networking_screenshot.png)
+
 ## What This Demo Shows
 
 A Python-based metrics generator simulates a realistic enterprise network with:
