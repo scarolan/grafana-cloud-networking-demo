@@ -1,0 +1,67 @@
+services:
+  # =========================================================================
+  # Grafana Alloy — Telemetry collector
+  # Receives OTLP from application services and ships to Grafana Cloud
+  # =========================================================================
+  alloy:
+    image: grafana/alloy:v1.5.1
+    restart: unless-stopped
+    # No host ports — Alloy is internal-only (avoids conflicts with other demos).
+    # Other containers reach it as alloy:4317/4318/12345 on the Docker bridge network.
+    # Tests use "docker exec" to reach Alloy's endpoints from inside the network.
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy
+    env_file:
+      - .env
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --stability.level=generally-available
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/12345'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - demo
+
+  # =========================================================================
+  # Add your application services below. Example:
+  # =========================================================================
+  # my-app:
+  #   image: vendor/my-app:1.0.0
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4317
+  #     - OTEL_SERVICE_NAME=my-app
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+  #   depends_on:
+  #     alloy:
+  #       condition: service_healthy
+  #   networks:
+  #     - demo
+
+  # =========================================================================
+  # k6 load testing — runs inside the Docker network via profile
+  # Usage: docker compose --profile load-test run --rm k6 run /scripts/load-test.js
+  # =========================================================================
+  k6:
+    image: grafana/k6:0.55.0
+    profiles: ["load-test"]
+    volumes:
+      - ./k6:/scripts
+    networks:
+      - demo
+
+networks:
+  demo:
+    driver: bridge

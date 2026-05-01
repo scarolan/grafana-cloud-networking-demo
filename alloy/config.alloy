@@ -1,0 +1,93 @@
+// =============================================================================
+// Grafana Alloy Configuration — Demo Builder Template
+// =============================================================================
+// This config ships telemetry to Grafana Cloud. The metrics remote_write block
+// is active by default. Uncomment additional pipelines as needed.
+//
+// Credentials come from environment variables set in .env.
+// All signals use the same GRAFANA_CLOUD_TOKEN — generate one at:
+//   grafana.com → My Account → Access Policies → Generate token
+// =============================================================================
+
+// =============================================================================
+// Metrics — Prometheus remote write to Grafana Cloud
+// =============================================================================
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_METRICS_URL")
+
+    basic_auth {
+      username = env("GRAFANA_METRICS_USERNAME")
+      password = env("GRAFANA_CLOUD_TOKEN")
+    }
+  }
+}
+
+// Self-monitoring: scrape Alloy's own metrics so you can verify the pipeline
+prometheus.scrape "alloy_self" {
+  targets    = [{"__address__" = "localhost:12345"}]
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+
+  scrape_interval = "15s"
+  metrics_path    = "/metrics"
+}
+
+// -----------------------------------------------------------------------------
+// Add Prometheus scrape targets for your application services:
+// -----------------------------------------------------------------------------
+// prometheus.scrape "my_service" {
+//   targets    = [{"__address__" = "my-service:8080"}]
+//   forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+//
+//   scrape_interval = "15s"
+//   metrics_path    = "/metrics"
+// }
+
+// =============================================================================
+// Logs — Loki (uncomment when your demo needs log collection)
+// =============================================================================
+// loki.write "grafana_cloud" {
+//   endpoint {
+//     url = env("GRAFANA_LOGS_URL")
+//
+//     basic_auth {
+//       username = env("GRAFANA_LOGS_USERNAME")
+//       password = env("GRAFANA_CLOUD_TOKEN")
+//     }
+//   }
+// }
+
+// Collect logs from Docker containers:
+// discovery.docker "containers" {
+//   host = "unix:///var/run/docker.sock"
+// }
+//
+// loki.source.docker "containers" {
+//   host    = "unix:///var/run/docker.sock"
+//   targets = discovery.docker.containers.targets
+//   forward_to = [loki.write.grafana_cloud.receiver]
+// }
+
+// =============================================================================
+// Traces — OTLP to Grafana Cloud Tempo (uncomment when your demo needs traces)
+// =============================================================================
+// otelcol.auth.basic "grafana_cloud" {
+//   username = env("GRAFANA_TRACES_USERNAME")
+//   password = env("GRAFANA_CLOUD_TOKEN")
+// }
+//
+// otelcol.exporter.otlp "grafana_cloud" {
+//   client {
+//     endpoint = env("GRAFANA_TRACES_URL")
+//     auth     = otelcol.auth.basic.grafana_cloud.handler
+//   }
+// }
+//
+// otelcol.receiver.otlp "default" {
+//   grpc { endpoint = "0.0.0.0:4317" }
+//   http { endpoint = "0.0.0.0:4318" }
+//
+//   output {
+//     traces = [otelcol.exporter.otlp.grafana_cloud.input]
+//   }
+// }

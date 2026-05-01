@@ -1,0 +1,33 @@
+# Secrets
+.env
+*.env.local
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform.lock.hcl
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Docker volumes (if mounted locally)
+data/
+
+# k6 output
+k6-results/
+*.har
+
+# Misc
+*.log
+tmp/
