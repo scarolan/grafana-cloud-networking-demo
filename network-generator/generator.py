@@ -2,16 +2,93 @@ import random
 import time
 import threading
 import logging
+import os
+import json
+import base64
+from urllib.request import Request, urlopen
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from prometheus_client import (
     start_http_server,
     Counter,
     Gauge,
     Histogram,
     Info,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
 )
+
+
+class LokiHandler(logging.Handler):
+    """Push log entries directly to Grafana Cloud Loki via HTTP."""
+
+    def __init__(self):
+        super().__init__()
+        self.url = os.environ.get("GRAFANA_LOGS_URL", "")
+        username = os.environ.get("GRAFANA_LOGS_USERNAME", "")
+        token = os.environ.get("GRAFANA_CLOUD_TOKEN", "")
+        if username and token:
+            cred = base64.b64encode(f"{username}:{token}".encode()).decode()
+            self.auth = f"Basic {cred}"
+        else:
+            self.auth = ""
+        self.batch = []
+        self.lock = threading.Lock()
+        self._start_flush_thread()
+
+    def _start_flush_thread(self):
+        def flusher():
+            while True:
+                time.sleep(5)
+                self.flush()
+        t = threading.Thread(target=flusher, daemon=True)
+        t.start()
+
+    def emit(self, record):
+        if not self.url or not self.auth:
+            return
+        ts = str(int(record.created * 1e9))
+        level = record.levelname.lower()
+        msg = self.format(record)
+        with self.lock:
+            self.batch.append((ts, msg, level))
+
+    def flush(self):
+        with self.lock:
+            if not self.batch:
+                return
+            entries = self.batch[:]
+            self.batch.clear()
+
+        by_level = {}
+        for ts, msg, level in entries:
+            by_level.setdefault(level, []).append([ts, msg])
+
+        streams = []
+        for level, values in by_level.items():
+            streams.append({
+                "stream": {
+                    "job": "network-generator",
+                    "compose_service": "network-generator",
+                    "level": level,
+                },
+                "values": values,
+            })
+
+        payload = json.dumps({"streams": streams}).encode()
+        req = Request(self.url, data=payload)
+        req.add_header("Content-Type", "application/json")
+        req.add_header("Authorization", self.auth)
+        try:
+            urlopen(req, timeout=5)
+        except Exception:
+            pass
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 log = logging.getLogger("network-generator")
+loki = LokiHandler()
+loki.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
+log.addHandler(loki)
 
 # =============================================================================
 # Device inventory
@@ -679,19 +756,36 @@ def update_loop():
         time.sleep(10)
 
 
+class MetricsHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/metrics" or self.path == "/":
+            output = generate_latest()
+            self.send_response(200)
+            self.send_header("Content-Type", CONTENT_TYPE_LATEST)
+            self.end_headers()
+            self.wfile.write(output)
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        pass
+
+
 if __name__ == "__main__":
     init_state()
     set_device_info()
 
-    log.info("Starting network metrics generator on :9090")
+    port = int(os.environ.get("PORT", "9090"))
+    log.info("Starting network metrics generator on :%d", port)
     log.info(
         "Simulating %d routers, %d switches, %d load balancers",
         len(ROUTERS), len(SWITCHES), len(LOAD_BALANCERS),
     )
-    start_http_server(9090)
 
     update_thread = threading.Thread(target=update_loop, daemon=True)
     update_thread.start()
 
-    while True:
-        time.sleep(60)
+    server = HTTPServer(("0.0.0.0", port), MetricsHandler)
+    log.info("Metrics server ready on :%d", port)
+    server.serve_forever()
