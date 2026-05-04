@@ -237,6 +237,29 @@ flowchart TD
     class ep,wp pool
 ```
 
+## Cloud Run (24/7 Metrics)
+
+If you want the generator running 24/7 — for example, to build up historical data for Grafana ML anomaly detection — you can deploy to Cloud Run:
+
+```bash
+# Authenticate with GCP
+gcloud auth login
+
+# Deploy (builds images with Cloud Build, deploys multi-container service)
+./cloud-run/deploy.sh
+```
+
+This deploys two containers as a Cloud Run sidecar pair:
+- **network-generator** — serves `/metrics` on port 8080
+- **alloy-sidecar** — scrapes the generator every 15s and pushes to Grafana Cloud
+
+The service runs with `minScale: 1` (always on) and CPU always allocated (no throttling), so metrics flow continuously. Logs are pushed directly to Loki via HTTP.
+
+**Tear down:**
+```bash
+gcloud run services delete network-metrics-generator --region=us-central1 --project=solutions-engineering-248511
+```
+
 ## Available Make Targets
 
 | Target | Description |
